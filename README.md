@@ -10,6 +10,7 @@ A collection of system design documents for interview preparation. Each topic is
 | [Rate Limiter](./rate-limiter/README.md) | Medium-Hard | Token Bucket, Redis Sharding, Lua Scripts, Fail-Closed | [⚡ Cheatsheet](./rate-limiter/CHEATSHEET.md) |
 | [Ad Click Aggregator](./ad-click-aggregator/README.md) | Hard | Stream Processing, Kafka, Flink, Reconciliation, Hot Shards | [⚡ Cheatsheet](./ad-click-aggregator/CHEATSHEET.md) |
 | [Web Crawler](./web-crawler/README.md) | Hard | Multi-stage Pipeline, robots.txt, DNS Caching, Crawler Traps | [⚡ Cheatsheet](./web-crawler/CHEATSHEET.md) |
+| [Stock Broker](./stock-broker/README.md) | Hard | Redis Pub/Sub, SSE, Order Consistency, Cleanup Jobs | [⚡ Cheatsheet](./stock-broker/CHEATSHEET.md) |
 
 ## 🗂️ Repository Structure
 
@@ -26,6 +27,9 @@ hld/
 │   ├── README.md
 │   └── CHEATSHEET.md
 ├── web-crawler/
+│   ├── README.md
+│   └── CHEATSHEET.md
+├── stock-broker/
 │   ├── README.md
 │   └── CHEATSHEET.md
 └── [future-topic]/
