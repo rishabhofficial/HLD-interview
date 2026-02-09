@@ -4,27 +4,41 @@ A collection of system design documents for interview preparation. Each topic is
 
 ## 📚 Topics
 
-| Topic | Difficulty | Key Concepts |
-|-------|------------|--------------|
-| [Payment System](./payment-system/README.md) | Hard | Idempotency, Event Sourcing, CDC, Financial Integrity |
+| Topic | Difficulty | Key Concepts | Quick Revision |
+|-------|------------|--------------|----------------|
+| [Payment System](./payment-system/README.md) | Hard | Idempotency, Event Sourcing, CDC, Financial Integrity | [⚡ Cheatsheet](./payment-system/CHEATSHEET.md) |
+| [Rate Limiter](./rate-limiter/README.md) | Medium-Hard | Token Bucket, Redis Sharding, Lua Scripts, Fail-Closed | [⚡ Cheatsheet](./rate-limiter/CHEATSHEET.md) |
+| [Ad Click Aggregator](./ad-click-aggregator/README.md) | Hard | Stream Processing, Kafka, Flink, Reconciliation, Hot Shards | [⚡ Cheatsheet](./ad-click-aggregator/CHEATSHEET.md) |
+| [Web Crawler](./web-crawler/README.md) | Hard | Multi-stage Pipeline, robots.txt, DNS Caching, Crawler Traps | [⚡ Cheatsheet](./web-crawler/CHEATSHEET.md) |
 
 ## 🗂️ Repository Structure
 
 ```
 hld/
 ├── README.md                    # This index file
-├── payment-system/              # Payment processing system design
-│   └── README.md
-├── [future-topic]/              # Future system designs
-│   └── README.md
+├── payment-system/
+│   ├── README.md                # Full detailed design
+│   └── CHEATSHEET.md            # 5-min quick revision
+├── rate-limiter/
+│   ├── README.md
+│   └── CHEATSHEET.md
+├── ad-click-aggregator/
+│   ├── README.md
+│   └── CHEATSHEET.md
+├── web-crawler/
+│   ├── README.md
+│   └── CHEATSHEET.md
+└── [future-topic]/
+    ├── README.md
+    └── CHEATSHEET.md
 ```
 
 ## 📖 How to Use
 
-1. Each topic folder contains a comprehensive `README.md`
-2. Diagrams are embedded as Mermaid (viewable on GitHub)
-3. Quick revision sections at the end of each doc
-4. Capacity estimations included for scale discussions
+1. **Full Study**: Read the comprehensive `README.md` for each topic
+2. **Quick Revision**: Use `CHEATSHEET.md` for 5-minute pre-interview refresh
+3. **Diagrams**: Embedded as Mermaid (viewable on GitHub)
+4. **Good vs Bad**: Each cheatsheet shows recommended vs anti-patterns
 
 ## 🎯 Interview Levels
 

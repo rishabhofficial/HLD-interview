@@ -2,6 +2,8 @@
 
 > **Difficulty**: Hard | **Company**: Stripe, PayPal, Square, Adyen
 
+> ⚡ **[Quick Cheatsheet](./CHEATSHEET.md)** - 5-minute revision with Good vs Bad patterns
+
 ## Table of Contents
 - [Overview](#overview)
 - [Requirements](#requirements)
