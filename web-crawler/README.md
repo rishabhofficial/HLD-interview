@@ -13,7 +13,6 @@
 - [Deep Dives](#deep-dives)
 - [Capacity Estimation](#capacity-estimation)
 - [Interview Level Expectations](#interview-level-expectations)
-- [Quick Revision Cheatsheet](#quick-revision-cheatsheet)
 
 ---
 
@@ -616,57 +615,6 @@ flowchart LR
 | Detailed scaling math | Dynamic content handling |
 | Proactively identify crawler traps | Teach interviewer something new |
 | Content deduplication strategies | |
-
----
-
-## Quick Revision Cheatsheet
-
-### 🔑 Key Concepts (One-liners)
-
-| Concept | Remember This |
-|---------|---------------|
-| **Multi-stage pipeline** | Separate fetch and parse for fault tolerance |
-| **robots.txt** | Check before crawling, respect Crawl-delay |
-| **Rate limiting** | 1 req/sec/domain via Redis |
-| **DNS caching** | Cache lookups, use multiple providers |
-| **Crawler traps** | Max depth limit prevents infinite loops |
-| **Deduplication** | Check URL in DB + hash content |
-
-### 📊 Numbers to Remember
-
-| Metric | Value |
-|--------|-------|
-| Total pages | 10 billion |
-| Average page size | 2 MB |
-| Time limit | 5 days |
-| Required rate | ~23k pages/sec |
-| Machines needed | 4 |
-| Standard rate limit | 1 req/sec/domain |
-
-### 🎯 Key Trade-offs
-
-| Decision | Option A | Option B | Winner |
-|----------|----------|----------|--------|
-| Architecture | Monolithic | Pipeline | Pipeline (fault tolerance) |
-| Queue | Kafka | SQS | SQS (simpler retries) |
-| Dedup | Bloom filter | DB index | DB index (simpler) |
-| Rate limit | Per-crawler | Global Redis | Global (accurate) |
-
-### 💬 Interview Phrases
-
-1. *"Pipeline stages isolate failures - if parsing fails, HTML is still in S3"*
-2. *"Global rate limiting via Redis ensures true 1 req/sec per domain"*
-3. *"DNS caching + multiple providers avoids DNS bottleneck"*
-4. *"Max depth prevents crawler traps from infinite loops"*
-5. *"Content hashing catches duplicate content across different URLs"*
-
-### ⚠️ Pitfalls to Avoid
-
-1. ❌ Monolithic crawler (all-or-nothing failure)
-2. ❌ Ignoring robots.txt
-3. ❌ No rate limiting (get blocked)
-4. ❌ DNS lookup per request
-5. ❌ No crawler trap protection
 
 ---
 

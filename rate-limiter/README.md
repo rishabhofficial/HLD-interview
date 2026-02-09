@@ -14,7 +14,6 @@
 - [Deep Dives](#deep-dives)
 - [Capacity Estimation](#capacity-estimation)
 - [Interview Level Expectations](#interview-level-expectations)
-- [Quick Revision Cheatsheet](#quick-revision-cheatsheet)
 
 ---
 
@@ -819,67 +818,6 @@ flowchart TB
 | Real-world experience with similar scale | Gradual rollouts, canary deploys |
 | Proactively discuss observability | Failure modes from experience |
 | Strong opinions on technology choices | System integration challenges |
-
----
-
-## Quick Revision Cheatsheet
-
-### 🔑 Key Concepts (One-liners)
-
-| Concept | Remember This |
-|---------|---------------|
-| **Token Bucket** | Bucket with tokens, refills at steady rate, burst allowed |
-| **Fixed Window** | Simple counters, boundary effect allows 2x burst |
-| **Sliding Window** | Approximation using weighted previous + current window |
-| **Lua Script** | Makes Redis read-modify-write atomic |
-| **Fail-Closed** | Reject all when Redis down (safer for critical systems) |
-| **Connection Pool** | Reuse TCP connections, save 50ms per request |
-
-### 📊 Numbers to Remember
-
-| Metric | Value |
-|--------|-------|
-| Target RPS | 1,000,000 |
-| Redis capacity per instance | 100-200k ops/s |
-| Shards needed for 1M RPS | 10-15 |
-| Latency target | < 10ms |
-| Memory per user bucket | ~50 bytes |
-| DAU | 100 million |
-
-### 🎯 Key Trade-offs
-
-| Decision | Option A | Option B | Winner |
-|----------|----------|----------|--------|
-| Algorithm | Fixed Window | Token Bucket | Token Bucket (burst handling) |
-| Placement | In-process | API Gateway | API Gateway (shared state) |
-| Failure mode | Fail-open | Fail-closed | Depends (closed for critical) |
-| Config updates | Deploy | DB + Cache | DB + Cache (speed) |
-
-### 🚨 Common Pitfalls to Avoid
-
-1. ❌ Forgetting race conditions in Redis (use Lua scripts!)
-2. ❌ Using fixed window for strict limits (boundary effect)
-3. ❌ Single Redis instance for high scale (shard it!)
-4. ❌ Fail-open during DDoS (cascading failure)
-5. ❌ New TCP connection per request (use connection pool)
-
-### 💬 Key Phrases for Interview
-
-- *"Token Bucket handles bursty traffic naturally while enforcing overall limits"*
-- *"Lua scripts make the entire read-modify-write atomic in Redis"*
-- *"We shard by client ID using consistent hashing for even distribution"*
-- *"Fail-closed protects backend during outages, even at cost of availability"*
-- *"Connection pooling eliminates TCP handshake overhead"*
-
-### 📝 HTTP 429 Response Template
-
-```http
-HTTP/1.1 429 Too Many Requests
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 0
-X-RateLimit-Reset: 1640995200
-Retry-After: 60
-```
 
 ---
 

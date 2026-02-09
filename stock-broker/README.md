@@ -14,7 +14,6 @@
 - [Deep Dives](#deep-dives)
 - [Capacity Estimation](#capacity-estimation)
 - [Interview Level Expectations](#interview-level-expectations)
-- [Quick Revision Cheatsheet](#quick-revision-cheatsheet)
 
 ---
 
@@ -93,21 +92,21 @@ flowchart LR
 erDiagram
     USER ||--o{ ORDER : places
     ORDER }o--|| SYMBOL : for
-    
+
     USER {
         string id PK
         string name
         string email
         decimal balance
     }
-    
+
     SYMBOL {
         string name PK
         string company
         decimal current_price
         timestamp last_updated
     }
-    
+
     ORDER {
         string id PK
         string user_id FK
@@ -133,7 +132,7 @@ stateDiagram-v2
     submitted --> cancelled: User cancelled
     submitted --> failed: Exchange rejected
     pending --> failed: Submission failed
-    
+
     pending --> pending_cancel: Cancel requested
     pending_cancel --> cancelled: Cancel confirmed
 ```
@@ -219,52 +218,52 @@ flowchart TB
     subgraph Clients
         App[Mobile/Web App]
     end
-    
+
     subgraph Gateway
         LB[Load Balancer]
         API[API Gateway]
     end
-    
+
     subgraph PriceService[Live Price Service]
         SS[Symbol Service<br/>SSE Connections]
         SPP[Symbol Price<br/>Processor]
         Redis[(Redis Pub/Sub)]
     end
-    
+
     subgraph OrderService[Order Service]
         OS[Order Service]
         TP[Trade Processor]
         KV[(RocksDB<br/>ExternalId → OrderId)]
     end
-    
+
     subgraph Storage
         OrderDB[(Order DB<br/>Partitioned by userId)]
     end
-    
+
     subgraph External
         Exchange[External Exchange]
     end
-    
+
     subgraph Background
         Cleanup[Cleanup Job]
     end
-    
+
     App <-->|SSE| SS
     App --> LB --> API
     API --> OS
-    
+
     Exchange -->|Price Feed| SPP
     SPP --> Redis
     Redis --> SS
-    
+
     OS <-->|Sync API| Exchange
     OS --> OrderDB
     OS --> KV
-    
+
     Exchange -->|Trade Feed| TP
     TP --> KV
     TP --> OrderDB
-    
+
     Cleanup --> OrderDB
     Cleanup <--> Exchange
 ```
@@ -280,18 +279,18 @@ sequenceDiagram
     participant R as Redis Pub/Sub
     participant SPP as Price Processor
     participant E as Exchange
-    
+
     U->>SS: Subscribe to INFY, TCS
     SS->>SS: Track user → symbols mapping
     SS->>R: Subscribe to INFY, TCS channels
-    
+
     E->>SPP: Price update (INFY: ₹1520)
     SPP->>R: Publish to INFY channel
     R->>SS: Receive INFY update
     SS->>U: SSE push (INFY: ₹1520)
-    
+
     Note over SS,R: Only subscribe to channels<br/>with active users
-    
+
     U->>SS: Unsubscribe / Disconnect
     SS->>SS: Remove from mapping
     alt No users for symbol
@@ -310,7 +309,7 @@ sequenceDiagram
     participant DB as Order DB
     participant KV as RocksDB
     participant E as Exchange
-    
+
     U->>OS: POST /order
     OS->>DB: Store order (status=pending)
     OS->>E: Submit order (sync)
@@ -318,7 +317,7 @@ sequenceDiagram
     OS->>KV: Map externalId → (orderId, userId)
     OS->>DB: Update status=submitted, externalOrderId
     OS-->>U: Order created
-    
+
     Note over OS,E: If exchange fails,<br/>mark order as failed
 ```
 
@@ -332,7 +331,7 @@ sequenceDiagram
     participant TP as Trade Processor
     participant KV as RocksDB
     participant DB as Order DB
-    
+
     E->>TP: Trade executed (externalOrderId, shares, price)
     TP->>KV: Lookup externalOrderId
     KV-->>TP: (orderId, userId)
@@ -365,26 +364,26 @@ flowchart TB
     subgraph Exchange
         E[Exchange Price Feed]
     end
-    
+
     subgraph Processor
         SPP[Symbol Price Processor<br/>Single connection to exchange]
     end
-    
+
     subgraph PubSub[Redis Pub/Sub]
         C1[Channel: INFY]
         C2[Channel: TCS]
         C3[Channel: RELIANCE]
     end
-    
+
     subgraph SymbolServers[Symbol Service Fleet]
         SS1[Server 1<br/>Users want: INFY, TCS]
         SS2[Server 2<br/>Users want: TCS, RELIANCE]
         SS3[Server 3<br/>Users want: INFY]
     end
-    
+
     E --> SPP
     SPP --> C1 & C2 & C3
-    
+
     C1 --> SS1 & SS3
     C2 --> SS1 & SS2
     C3 --> SS2
@@ -400,7 +399,7 @@ flowchart TB
 6. On disconnect, remove user from mapping; if no users for symbol, unsubscribe
 
 ```
-✅ GOOD: 
+✅ GOOD:
    1 Price Processor → Redis → N Symbol Servers → M Users
    Each server only subscribes to symbols its users need
 
@@ -426,18 +425,18 @@ flowchart LR
     subgraph OrderService
         OS[Order Service]
     end
-    
+
     subgraph Mapping
         KV[(RocksDB<br/>externalOrderId → orderId, userId)]
     end
-    
+
     subgraph OrderDB[Order DB - Partitioned by userId]
         S1[(Shard 1<br/>Users A-M)]
         S2[(Shard 2<br/>Users N-Z)]
     end
-    
+
     OS -->|1. After exchange confirms| KV
-    
+
     TP[Trade Processor] -->|2. Lookup on trade| KV
     KV -->|3. Get userId, orderId| TP
     TP -->|4. Go to correct shard| S1
@@ -538,17 +537,17 @@ flowchart TB
     subgraph Expensive[Exchange Connections]
         E[Exchange]
     end
-    
+
     subgraph Minimal[Our Connections]
         PP[1 Price Processor]
         OS[Order Service Pool<br/>Limited instances]
     end
-    
+
     subgraph Internal[Internal Distribution]
         Redis[(Redis)]
         SS[Symbol Servers<br/>Many instances]
     end
-    
+
     E <--> PP
     E <--> OS
     PP --> Redis --> SS
@@ -625,56 +624,6 @@ flowchart TB
 | All consistency edge cases | Exchange API nuances |
 | Proactive on cleanup job pattern | Rate limiting for excess updates |
 | Technology choices with justification | Multiple exchange handling |
-
----
-
-## Quick Revision Cheatsheet
-
-### 🔑 Key Concepts (One-liners)
-
-| Concept | Remember This |
-|---------|---------------|
-| **Broker vs Exchange** | We build broker (routes orders), exchange executes |
-| **Redis Pub/Sub** | Price Processor → Redis → Symbol Servers → Users |
-| **SSE** | Server-Sent Events for live price streaming |
-| **externalOrderId mapping** | RocksDB maps exchange ID to our orderId + userId |
-| **pending state** | Store order as pending BEFORE exchange call |
-| **Cleanup job** | Reconcile stuck orders using clientOrderId |
-
-### 📊 Numbers to Remember
-
-| Metric | Value |
-|--------|-------|
-| DAU | 20 million |
-| Trades/day | 100 million |
-| Peak TPS | ~5,000 |
-| Latency target | < 200ms |
-| Symbols | 1,000s |
-
-### 🎯 Key Trade-offs
-
-| Decision | Option A | Option B | Winner |
-|----------|----------|----------|--------|
-| Live prices | Polling | SSE | SSE (real-time) |
-| Price distribution | Direct exchange | Redis Pub/Sub | Redis (fewer connections) |
-| Order DB partition | By orderId | By userId | userId (fast user queries) |
-| Order submission | Async | Sync | Sync (immediate confirmation) |
-
-### 💬 Interview Phrases
-
-1. *"We're building a broker, not an exchange - we route orders, exchange executes"*
-2. *"Redis Pub/Sub decouples price feed from user connections"*
-3. *"Store order as pending first - if exchange fails, we still have a record"*
-4. *"Cleanup job reconciles stuck orders using clientOrderId"*
-5. *"Partition orders by userId for fast user queries"*
-
-### ⚠️ Pitfalls to Avoid
-
-1. ❌ Each server connecting to exchange directly
-2. ❌ Polling for price updates (use SSE)
-3. ❌ Submit to exchange before storing order
-4. ❌ No intermediate state for cancellation
-5. ❌ Using float for prices (use cents/paise)
 
 ---
 

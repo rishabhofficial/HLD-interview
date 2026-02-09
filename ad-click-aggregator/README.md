@@ -13,7 +13,6 @@
 - [Deep Dives](#deep-dives)
 - [Capacity Estimation](#capacity-estimation)
 - [Interview Level Expectations](#interview-level-expectations)
-- [Quick Revision Cheatsheet](#quick-revision-cheatsheet)
 
 ---
 
@@ -683,68 +682,6 @@ flowchart TB
 | Fault-tolerant, complete solution | Reconciliation patterns |
 | Deep database choice justification | Hot shard mitigation strategies |
 | Drive entire discussion independently | Teach interviewer something new |
-
----
-
-## Quick Revision Cheatsheet
-
-### 🔑 Key Concepts (One-liners)
-
-| Concept | Remember This |
-|---------|---------------|
-| **Stream Processing** | Kafka → Flink → OLAP for real-time aggregation |
-| **Batch Reconciliation** | S3 → Spark → Compare with OLAP daily |
-| **Hot Shards** | Salt partition key for viral ads |
-| **Idempotency** | Dedup in Flink with TTL-based state |
-| **Pre-aggregation** | Roll up minutes → hours → days for fast queries |
-| **Server Redirect** | 302 redirect after tracking for reliability |
-
-### 📊 Numbers to Remember
-
-| Metric | Value |
-|--------|-------|
-| Peak clicks/second | 10,000 |
-| Daily clicks | 100 million |
-| Active ads | 10 million |
-| Kafka shard limit | 1 MB/s or 1000 rec/s |
-| Event size | ~200 bytes |
-| Daily raw storage | ~20 GB |
-
-### 🎯 Key Trade-offs
-
-| Decision | Option A | Option B | Winner |
-|----------|----------|----------|--------|
-| Click processing | Batch | Stream | Stream (real-time) |
-| Redirect | Client-side | Server-side | Server (reliable) |
-| Dedup | DB constraint | Flink state | Flink (real-time) |
-| Large windows | Query raw data | Pre-aggregate | Pre-aggregate (speed) |
-
-### 🚨 Common Pitfalls to Avoid
-
-1. ❌ Writing directly to OLAP without stream (high latency)
-2. ❌ Ignoring hot shard problem (viral ads)
-3. ❌ No reconciliation (data accuracy issues)
-4. ❌ Trusting client-side redirect only (unreliable)
-5. ❌ Over-engineering checkpointing for small windows
-
-### 💬 Key Phrases for Interview
-
-- *"We use Kafka + Flink for real-time aggregation with sub-second latency"*
-- *"Partition by ad_id ensures all events for an ad go to same processor"*
-- *"Daily reconciliation from S3 catches any real-time processing errors"*
-- *"We salt partition keys for hot ads to spread load across shards"*
-- *"Pre-aggregated rollups enable sub-second queries for large time ranges"*
-
-### 🏗️ Technology Choices
-
-| Component | Technology | Why |
-|-----------|------------|-----|
-| Stream | Kafka / Kinesis | Durable, partitioned, replayable |
-| Stream Processor | Apache Flink | Stateful, exactly-once, windowing |
-| OLAP DB | ClickHouse / Druid | Columnar, fast aggregations |
-| Data Lake | S3 | Cheap, durable, batch-friendly |
-| Batch Processor | Spark | Integrates with S3, scalable |
-| Cache | Redis | Fast, TTL support |
 
 ---
 

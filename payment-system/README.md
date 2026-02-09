@@ -13,7 +13,6 @@
 - [Deep Dives](#deep-dives)
 - [Capacity Estimation](#capacity-estimation)
 - [Interview Level Expectations](#interview-level-expectations)
-- [Quick Revision Cheatsheet](#quick-revision-cheatsheet)
 
 ---
 
@@ -640,56 +639,6 @@ flowchart TB
 | Handle complex edge cases | Network outage handling |
 | System-wide consistency model | Exactly-once semantics |
 | Multi-region considerations | Compliance requirements |
-
----
-
-## Quick Revision Cheatsheet
-
-### 🔑 Key Concepts (One-liners)
-
-| Concept | Remember This |
-|---------|---------------|
-| **PaymentIntent** | Merchant's intention, owns the state machine |
-| **Transaction** | Actual money movement, many per intent |
-| **Idempotency** | Same request = same result, use unique keys |
-| **CDC** | Database → Kafka, zero code changes |
-| **Tokenization** | Card → token on client, never raw data |
-| **Reconciliation** | Match our records with payment network |
-
-### 📊 Numbers to Remember
-
-| Metric | Value |
-|--------|-------|
-| Target TPS | 10,000 |
-| Kafka partition capacity | 5-10k msg/s |
-| Storage per year | ~150-180 TB |
-| Replication factor | 3 |
-| Cold storage threshold | 3-6 months |
-
-### 🎯 Key Trade-offs
-
-| Decision | Option A | Option B | Winner |
-|----------|----------|----------|--------|
-| Event capture | Application events | CDC | CDC (consistency) |
-| Card handling | Direct API | Iframe + token | Iframe (PCI scope) |
-| Timeout handling | Assume failure | Pending + reconcile | Pending (safety) |
-| Audit storage | Same DB | Event stream | Event stream (immutable) |
-
-### 🚨 Common Pitfalls to Avoid
-
-1. ❌ Assuming timeout = failure (causes missed charges)
-2. ❌ Storing raw card data (PCI violation)
-3. ❌ Single partition Kafka (ordering bottleneck)
-4. ❌ No idempotency keys (double charges)
-5. ❌ Polling-only for merchants (latency issues)
-
-### 💬 Key Phrases for Interview
-
-- *"PaymentIntent abstracts the complexity from merchants"*
-- *"CDC gives us guaranteed consistency without code changes"*
-- *"Idempotency keys ensure exactly-once payment processing"*
-- *"We embrace eventual consistency because payment networks are inherently async"*
-- *"Iframe isolation keeps card data out of PCI scope for merchants"*
 
 ---
 

@@ -39,13 +39,13 @@ flowchart TB
         Redis --> SS[Symbol Service]
         SS -->|SSE| Users
     end
-    
+
     subgraph Orders[Order Management]
         OS[Order Service] <-->|Sync| Exchange
         TP[Trade Processor] --> OrderDB[(Order DB)]
         KV[(RocksDB<br/>ExternalId Map)]
     end
-    
+
     Exchange -->|Price Feed| PP
     Exchange -->|Trade Feed| TP
     OS --> OrderDB
@@ -96,7 +96,7 @@ flowchart TB
 ```
 ✅ GOOD:
    RocksDB: externalOrderId → (orderId, userId)
-   
+
    Trade arrives → Lookup in RocksDB → Get userId → Go to correct DB shard
 
 ❌ BAD:
